@@ -101,65 +101,74 @@ fun ProfileContent(profile: Profile) {
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray
         )
-        // Location
-        Text(
-            text = "${profile.location.city}, ${profile.location.country}",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
-        )
+
+        // Location (check if not null)
+        profile.location?.let {
+            Text(
+                text = "${it.city}, ${it.country}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Stats
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            StatItem(value = profile.stats.followers.toString(), label = "Followers")
-            StatItem(value = profile.stats.following.toString(), label = "Following")
-            StatItem(value = profile.stats.shots.toString(), label = "Shots")
-            StatItem(value = profile.stats.collections.toString(), label = "Collections")
+        profile.stats?.let { stats ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                StatItem(value = stats.followers.toString(), label = "Followers")
+                StatItem(value = stats.following.toString(), label = "Following")
+                StatItem(value = stats.shots.toString(), label = "Shots")
+                StatItem(value = stats.collections.toString(), label = "Collections")
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
         Divider()
         Spacer(modifier = Modifier.height(24.dp))
 
+        // --- START OF FIX ---
         // Links
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            profile.links.website?.let {
-                if (it.isNotBlank()) {
-                    SocialLink(
-                        icon = Icons.Default.Language,
-                        text = "Website",
-                        onClick = { openCustomTab(context, it) }
-                    )
+        profile.links?.let { links ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                links.website?.let {
+                    if (it.isNotBlank()) {
+                        SocialLink(
+                            icon = Icons.Default.Language,
+                            text = "Website",
+                            onClick = { openCustomTab(context, it) }
+                        )
+                    }
                 }
-            }
-            // Note: You would typically add custom icons for Instagram/GitHub
-            profile.links.instagram?.let {
-                if (it.isNotBlank()) {
-                    SocialLink(
-                        icon = Icons.Default.Info, // Placeholder
-                        text = "Instagram",
-                        onClick = { openCustomTab(context, it) }
-                    )
+                // Note: You would typically add custom icons for Instagram/GitHub
+                links.instagram?.let {
+                    if (it.isNotBlank()) {
+                        SocialLink(
+                            icon = Icons.Default.Info, // Placeholder
+                            text = "Instagram",
+                            onClick = { openCustomTab(context, it) }
+                        )
+                    }
                 }
-            }
-            profile.links.github?.let {
-                if (it.isNotBlank()) {
-                    SocialLink(
-                        icon = Icons.Default.List, // Placeholder
-                        text = "GitHub",
-                        onClick = { openCustomTab(context, it) }
-                    )
+                links.github?.let {
+                    if (it.isNotBlank()) {
+                        SocialLink(
+                            icon = Icons.Default.List, // Placeholder
+                            text = "GitHub",
+                            onClick = { openCustomTab(context, it) }
+                        )
+                    }
                 }
             }
         }
+        // --- END OF FIX ---
     }
 }
 

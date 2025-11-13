@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.glide.compose)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.material.icons.extended)
 }

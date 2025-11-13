@@ -5,8 +5,13 @@ pluginManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+
+                // --- THESE ARE THE LINES THAT FIX THE ERROR ---
+                includeGroupByRegex("com\\.google\\.devtools.*") // Allows KSP
+                includeGroupByRegex("com\\.google\\.dagger.*")   // Allows Hilt
             }
         }
+
         mavenCentral()
         gradlePluginPortal()
     }

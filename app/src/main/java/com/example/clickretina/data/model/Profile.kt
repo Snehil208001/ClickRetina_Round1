@@ -10,11 +10,11 @@ data class Profile(
     @SerializedName("avatar_url")
     val avatarUrl: String,
     @SerializedName("location")
-    val location: Location,
+    val location: Location?, // From our previous fix
     @SerializedName("stats")
-    val stats: Stats,
+    val stats: Stats?, // From our previous fix
     @SerializedName("links")
-    val links: Links
+    val links: Links? // <-- ADDED NULLABLE ? HERE
 )
 
 data class Location(
