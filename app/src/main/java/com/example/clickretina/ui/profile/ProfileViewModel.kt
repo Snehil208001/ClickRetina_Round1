@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -22,13 +24,27 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun fetchProfile() {
-        viewModelScope.launch {
-            _uiState.value = ProfileUiState.Loading
+        // Set Loading state on the Main thread first
+        _uiState.value = ProfileUiState.Loading
+
+        // Launch a new coroutine on the IO thread for the network call
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val profile = apiService.getProfile()
-                _uiState.value = ProfileUiState.Success(profile)
+                val response = apiService.getProfile()
+
+                // Switch back to the Main thread to update the UI
+                withContext(Dispatchers.Main) {
+                    if (response.profile != null) {
+                        _uiState.value = ProfileUiState.Success(response.profile)
+                    } else {
+                        _uiState.value = ProfileUiState.Error("Failed to parse profile data.")
+                    }
+                }
             } catch (e: Exception) {
-                _uiState.value = ProfileUiState.Error(e.message ?: "An unknown error occurred")
+                // Switch back to the Main thread to show the error
+                withContext(Dispatchers.Main) {
+                    _uiState.value = ProfileUiState.Error(e.message ?: "An unknown error occurred")
+                }
             }
         }
     }

@@ -80,7 +80,7 @@ fun ProfileContent(profile: Profile) {
         // Avatar
         GlideImage(
             model = profile.avatarUrl,
-            contentDescription = "${profile.name}'s avatar",
+            contentDescription = "${profile.name ?: "User"}'s avatar",
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape),
@@ -91,13 +91,13 @@ fun ProfileContent(profile: Profile) {
 
         // Name
         Text(
-            text = profile.name,
+            text = profile.name ?: "Unnamed User",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         // Username
         Text(
-            text = "@${profile.username}",
+            text = "@${profile.username ?: "unknown"}",
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray
         )
@@ -130,7 +130,6 @@ fun ProfileContent(profile: Profile) {
         Divider()
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- START OF FIX ---
         // Links
         profile.links?.let { links ->
             Column(
@@ -168,7 +167,6 @@ fun ProfileContent(profile: Profile) {
                 }
             }
         }
-        // --- END OF FIX ---
     }
 }
 
@@ -193,7 +191,7 @@ fun SocialLink(icon: ImageVector, text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick) // <-- TYPO REMOVED FROM HERE
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

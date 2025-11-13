@@ -4,17 +4,17 @@ import com.google.gson.annotations.SerializedName
 
 data class Profile(
     @SerializedName("name")
-    val name: String,
+    val name: String?, // <-- MODIFIED (added ?)
     @SerializedName("username")
-    val username: String,
+    val username: String?, // <-- MODIFIED (added ?)
     @SerializedName("avatar_url")
-    val avatarUrl: String,
+    val avatarUrl: String?, // <-- MODIFIED (added ?)
     @SerializedName("location")
-    val location: Location?, // From our previous fix
+    val location: Location?,
     @SerializedName("stats")
-    val stats: Stats?, // From our previous fix
+    val stats: Stats?,
     @SerializedName("links")
-    val links: Links? // <-- ADDED NULLABLE ? HERE
+    val links: Links?
 )
 
 data class Location(
