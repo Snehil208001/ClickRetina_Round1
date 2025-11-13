@@ -4,24 +4,13 @@ This document serves as the **official assignment submission** for the Android d
 
 ---
 
-## 📌 Student Submission Details
+## 📌Submission Details
 
 **Project Name:** ClickRetina – Profile Viewer App
 
 **Objective:** Build an Android application that fetches and displays a user profile from a remote API using modern Android development tools.
 
 **Status:** ✔ Fully Completed
-
----
-
-## 📱 Demo Screenshot
-
-*Add your screenshots here (as part of the assignment guidelines).* Example:
-
-```
-![WhatsApp Image 2025-11-13 at 18 14 05_4f38e810](https://github.com/user-attachments/assets/a707a84a-792a-4347-8f1f-dcd70f4ffc71)
-
-```
 
 ---
 
