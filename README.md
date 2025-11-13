@@ -19,7 +19,7 @@ This document serves as the **official assignment submission** for the Android d
 *Add your screenshots here (as part of the assignment guidelines).* Example:
 
 ```
-[WhatsApp Image 2025-11-13 at 18 14 05_2c34aba4](https://github.com/user-attachments/assets/54ed9d02-0d2d-42d2-948d-7770c583274b)
+![WhatsApp Image 2025-11-13 at 18 14 05_4f38e810](https://github.com/user-attachments/assets/a707a84a-792a-4347-8f1f-dcd70f4ffc71)
 
 ```
 
