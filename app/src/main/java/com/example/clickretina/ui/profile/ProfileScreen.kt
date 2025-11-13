@@ -4,9 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.People // <-- IMPORT THIS
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.clickretina.data.model.Profile
+import com.example.clickretina.data.model.User // <-- IMPORT NEW User class
 import com.example.clickretina.utils.openCustomTab
 
 @Composable
@@ -60,7 +61,7 @@ fun ProfileScreen(
                 }
             }
             is ProfileUiState.Success -> {
-                ProfileContent(profile = state.profile)
+                ProfileContent(user = state.user) // <-- Pass user object
             }
         }
     }
@@ -68,7 +69,7 @@ fun ProfileScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileContent(profile: Profile) {
+fun ProfileContent(user: User) { // <-- Accept User object
     val context = LocalContext.current
 
     Column(
@@ -79,8 +80,8 @@ fun ProfileContent(profile: Profile) {
     ) {
         // Avatar
         GlideImage(
-            model = profile.avatarUrl,
-            contentDescription = "${profile.name ?: "User"}'s avatar",
+            model = user.avatar, // <-- Use user.avatar
+            contentDescription = "${user.name ?: "User"}'s avatar",
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape),
@@ -91,38 +92,43 @@ fun ProfileContent(profile: Profile) {
 
         // Name
         Text(
-            text = profile.name ?: "Unnamed User",
+            text = user.name ?: "Unnamed User",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         // Username
         Text(
-            text = "@${profile.username ?: "unknown"}",
+            text = user.username ?: "@unknown", // <-- Use user.username
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray
         )
 
-        // Location (check if not null)
-        profile.location?.let {
-            Text(
-                text = "${it.city}, ${it.country}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
-            )
+        // Location
+        user.location?.let {
+            val city = it.city
+            val country = it.country
+            if (!city.isNullOrBlank() && !country.isNullOrBlank()) {
+                Text(
+                    text = "$city, $country",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Stats
-        profile.stats?.let { stats ->
+        user.statistics?.let { stats -> // <-- Use user.statistics
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatItem(value = stats.followers.toString(), label = "Followers")
-                StatItem(value = stats.following.toString(), label = "Following")
-                StatItem(value = stats.shots.toString(), label = "Shots")
-                StatItem(value = stats.collections.toString(), label = "Collections")
+                StatItem(value = (stats.followers ?: 0).toString(), label = "Followers")
+                StatItem(value = (stats.following ?: 0).toString(), label = "Following")
+                // Access nested activity stats
+                StatItem(value = (stats.activity?.shots ?: 0).toString(), label = "Shots")
+                StatItem(value = (stats.activity?.collections ?: 0).toString(), label = "Collections")
             }
         }
 
@@ -131,13 +137,14 @@ fun ProfileContent(profile: Profile) {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Links
-        profile.links?.let { links ->
+        user.social?.let { social -> // <-- Use user.social
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                links.website?.let {
+                // Website
+                social.website?.let {
                     if (it.isNotBlank()) {
                         SocialLink(
                             icon = Icons.Default.Language,
@@ -146,22 +153,20 @@ fun ProfileContent(profile: Profile) {
                         )
                     }
                 }
-                // Note: You would typically add custom icons for Instagram/GitHub
-                links.instagram?.let {
-                    if (it.isNotBlank()) {
+
+                // Loop through all profiles in the list
+                social.profiles?.forEach { profile ->
+                    if (!profile.platform.isNullOrBlank() && !profile.url.isNullOrBlank()) {
+                        val icon = when (profile.platform.lowercase()) {
+                            "instagram" -> Icons.Default.CameraAlt
+                            "facebook" -> Icons.Default.People
+                            "github" -> Icons.Default.Code
+                            else -> Icons.Default.Language // Fallback
+                        }
                         SocialLink(
-                            icon = Icons.Default.Info, // Placeholder
-                            text = "Instagram",
-                            onClick = { openCustomTab(context, it) }
-                        )
-                    }
-                }
-                links.github?.let {
-                    if (it.isNotBlank()) {
-                        SocialLink(
-                            icon = Icons.Default.List, // Placeholder
-                            text = "GitHub",
-                            onClick = { openCustomTab(context, it) }
+                            icon = icon,
+                            text = profile.platform,
+                            onClick = { openCustomTab(context, profile.url) }
                         )
                     }
                 }
@@ -191,7 +196,7 @@ fun SocialLink(icon: ImageVector, text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick) // <-- TYPO REMOVED FROM HERE
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

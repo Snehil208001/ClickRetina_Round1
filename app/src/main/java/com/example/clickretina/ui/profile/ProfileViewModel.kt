@@ -24,24 +24,21 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun fetchProfile() {
-        // Set Loading state on the Main thread first
         _uiState.value = ProfileUiState.Loading
 
-        // Launch a new coroutine on the IO thread for the network call
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = apiService.getProfile()
 
-                // Switch back to the Main thread to update the UI
                 withContext(Dispatchers.Main) {
-                    if (response.profile != null) {
-                        _uiState.value = ProfileUiState.Success(response.profile)
+                    if (response.user != null) {
+                        // Pass the 'user' object to the Success state
+                        _uiState.value = ProfileUiState.Success(response.user)
                     } else {
-                        _uiState.value = ProfileUiState.Error("Failed to parse profile data.")
+                        _uiState.value = ProfileUiState.Error("Failed to parse user data.")
                     }
                 }
             } catch (e: Exception) {
-                // Switch back to the Main thread to show the error
                 withContext(Dispatchers.Main) {
                     _uiState.value = ProfileUiState.Error(e.message ?: "An unknown error occurred")
                 }
